@@ -21,6 +21,7 @@ pipeline {
                       --prettyPrint''', odcInstallation: 'OWASP-CHECK'
           dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
+      }
       stage('Build and Push Docker Images') {
         steps {
           sh('''
@@ -28,6 +29,5 @@ pipeline {
             ''')
         }
       }
-    }
   }
 }
