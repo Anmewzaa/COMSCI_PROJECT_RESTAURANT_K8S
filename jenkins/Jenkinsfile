@@ -12,10 +12,15 @@ pipeline {
           checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'Github-Token', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP']])
         }
       }
-      stage('OWASP Dependency Check') {
+      stage('OWASP Dependency-Check Vulnerabilities') {
         steps {
-          dependencyCheck additionalArguments: '''--scan project --format HTML''', odcInstallation: 'OWASP-CHECK'
+          dependencyCheck additionalArguments: ''' 
+                      -o './'
+                      -s './'
+                      -f 'ALL' 
+                      --prettyPrint''', odcInstallation: 'OWASP-CHECK'
+          dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
-      }
+    }
   }
 }
