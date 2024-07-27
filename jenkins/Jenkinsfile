@@ -47,5 +47,12 @@ pipeline {
             ''')
           }
       }
+      stage('Clean up Docker Image') {
+          steps {
+            sh('''
+              sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+            ''')
+          }
+      }
   }
 }
