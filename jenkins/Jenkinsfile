@@ -40,5 +40,12 @@ pipeline {
           }
         }
       }
+      stage('Trivy Image scan') {
+          steps {
+            sh('''
+              sudo trivy image ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} --output trivy_report.html
+            ''')
+          }
+      }
   }
 }
