@@ -54,5 +54,10 @@ pipeline {
             ''')
           }
       }
+      stage('Trigger Manifest Update') {
+          steps {
+            build job:'UpdateGitops',parameters: [string(name:'DOCKERTAG',value: "v0.1.${BUILD_NUMBER}")]
+          }
+      }
   }
 }
