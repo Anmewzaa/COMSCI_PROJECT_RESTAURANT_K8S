@@ -1,12 +1,14 @@
 pipeline {
   agent any
 
-  // environment {
-  //     HOST_NAME = 'asia-southeast1-docker.pkg.dev'
-  //     PROJECT_ID = 'proven-citizen-429506-e2'
-  //     REGISTRY_NAME = 'project-registry'
-  //     IMAGE_NAME = 'project'
-  // }
+  environment {
+      SONARSCANNER = 'sonarscanner'
+      SONARSERVER = 'sonarserver'
+      // HOST_NAME = 'asia-southeast1-docker.pkg.dev'
+      // PROJECT_ID = 'proven-citizen-429506-e2'
+      // REGISTRY_NAME = 'project-registry'
+      // IMAGE_NAME = 'project'
+  }
 
   stages {
       stage('Cleanup Workspace') {
@@ -28,6 +30,24 @@ pipeline {
                       --prettyPrint''', odcInstallation: 'OWASP_DEPENDENCY_CHECK'
           dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
+      }
+      stage('SonarQube Analysis') {
+          environment {
+            scannerHome = tool "${SONARSCANNER}"
+          }
+          steps {
+            withSonarQubeEnv("${SONARSERVER}") {
+            sh ("""
+              ${scannerHome}/bin/sonar-scanner \
+                -D sonar.projectKey=React-pipeline \
+                -D sonar.projectName=React-pipeline \
+                -D sonar.projectVersion=1.0.0 \
+                -D sonar.sources=./project/src \
+                -D sonar.test.inclusions=/ \
+                -D sonar.exclusions=/
+            """)
+            }
+          }
       }
       // stage('Build and Push Docker Images') {
       //   steps {
