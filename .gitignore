@@ -1,0 +1,16 @@
+# ไฟล์ state ของ Terraform
+*.tfstate
+*.tfstate.*
+
+# ข้อมูลการดึง provider
+.terraform/
+
+# Log ของ crash
+crash.log
+
+# Sensitive variable files
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
