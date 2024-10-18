@@ -1,12 +1,12 @@
 pipeline {
   agent any
 
-  environment {
-      HOST_NAME = 'asia-southeast1-docker.pkg.dev'
-      PROJECT_ID = 'proven-citizen-429506-e2'
-      REGISTRY_NAME = 'project-registry'
-      IMAGE_NAME = 'project'
-  }
+  // environment {
+  //     HOST_NAME = 'asia-southeast1-docker.pkg.dev'
+  //     PROJECT_ID = 'proven-citizen-429506-e2'
+  //     REGISTRY_NAME = 'project-registry'
+  //     IMAGE_NAME = 'project'
+  // }
 
   stages {
       stage('Cleanup Workspace') {
@@ -16,48 +16,48 @@ pipeline {
       }
       stage('Git Check Out') {
         steps {
-          checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'Github-Token', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP']])
+          checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_ACCESS_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
         }
       }
-      stage('OWASP Dependency-Check Vulnerabilities') {
-        steps {
-          dependencyCheck additionalArguments: ''' 
-                      -o './'
-                      -s './'
-                      -f 'ALL' 
-                      --prettyPrint''', odcInstallation: 'OWASP-CHECK'
-          dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-        }
-      }
-      stage('Build and Push Docker Images') {
-        steps {
-          script {
-            env.VERSION = "v0.1.${BUILD_NUMBER}"
-            sh('''
-                sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
-              ''')
-          }
-        }
-      }
-      stage('Trivy Image scan') {
-          steps {
-            sh('''
-              sudo trivy image ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} --scanners vuln
-            ''')
-          }
-      }
-      stage('Clean up Docker Image') {
-          steps {
-            sh('''
-              sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
-              sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
-            ''')
-          }
-      }
-      stage('Trigger Manifest Update') {
-          steps {
-            build job:'UpdateGitops',parameters: [string(name:'DOCKERTAG',value: "v0.1.${BUILD_NUMBER}")]
-          }
-      }
+      // stage('OWASP Dependency-Check Vulnerabilities') {
+      //   steps {
+      //     dependencyCheck additionalArguments: ''' 
+      //                 -o './'
+      //                 -s './'
+      //                 -f 'ALL' 
+      //                 --prettyPrint''', odcInstallation: 'OWASP-CHECK'
+      //     dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+      //   }
+      // }
+      // stage('Build and Push Docker Images') {
+      //   steps {
+      //     script {
+      //       env.VERSION = "v0.1.${BUILD_NUMBER}"
+      //       sh('''
+      //           sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
+      //         ''')
+      //     }
+      //   }
+      // }
+      // stage('Trivy Image scan') {
+      //     steps {
+      //       sh('''
+      //         sudo trivy image ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} --scanners vuln
+      //       ''')
+      //     }
+      // }
+      // stage('Clean up Docker Image') {
+      //     steps {
+      //       sh('''
+      //         sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+      //         sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+      //       ''')
+      //     }
+      // }
+      // stage('Trigger Manifest Update') {
+      //     steps {
+      //       build job:'UpdateGitops',parameters: [string(name:'DOCKERTAG',value: "v0.1.${BUILD_NUMBER}")]
+      //     }
+      // }
   }
 }
