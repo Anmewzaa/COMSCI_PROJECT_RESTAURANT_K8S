@@ -19,16 +19,16 @@ pipeline {
           checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_ACCESS_TOKENS', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
         }
       }
-      // stage('OWASP Dependency-Check Vulnerabilities') {
-      //   steps {
-      //     dependencyCheck additionalArguments: ''' 
-      //                 -o './'
-      //                 -s './'
-      //                 -f 'ALL' 
-      //                 --prettyPrint''', odcInstallation: 'OWASP-CHECK'
-      //     dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-      //   }
-      // }
+      stage('OWASP Dependency-Check Vulnerabilities') {
+        steps {
+          dependencyCheck additionalArguments: ''' 
+                      -o './'
+                      -s './'
+                      -f 'ALL' 
+                      --prettyPrint''', odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+          dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+        }
+      }
       // stage('Build and Push Docker Images') {
       //   steps {
       //     script {
