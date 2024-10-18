@@ -3,7 +3,7 @@ pipeline {
 
   environment {
       SONARSCANNER = 'SonarQube'
-      SONARSERVER = 'COMSCI_PROJECT_SONARQUBE_DEV'
+      SONARSERVER = 'SonarQube'
       // HOST_NAME = 'asia-southeast1-docker.pkg.dev'
       // PROJECT_ID = 'proven-citizen-429506-e2'
       // REGISTRY_NAME = 'project-registry'
