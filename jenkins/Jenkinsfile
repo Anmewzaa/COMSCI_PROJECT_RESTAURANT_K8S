@@ -71,13 +71,36 @@ pipeline {
           }
         }
       }
-      // stage('Trivy Image scan') {
-      //     steps {
-      //       sh('''
-      //         sudo trivy image ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} --scanners vuln
-      //       ''')
-      //     }
-      // }
+      stage('Scan with Trivy') {
+            steps {
+                script {
+                    env.VERSION = "v0.1.${BUILD_NUMBER}"
+                    sh '''
+                      trivy image --scanners vuln --format json --output trivy-report.json comsci-project-customer-dev:${VERSION}
+                    '''
+                }
+            }
+        }
+        stage('Publish Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
+            }
+        }
+        stage('Check Vulnerabilities') {
+            steps {
+                script {
+                    def trivyReport = readFile('trivy-report.json')
+                    def vulnerabilities = readJSON text: trivyReport
+
+                    if (vulnerabilities.Results.findAll { it.Vulnerabilities }.size() > 0) {
+                        currentBuild.result = 'UNSTABLE'
+                        echo 'Vulnerabilities found in the Docker image!'
+                    } else {
+                        echo 'No vulnerabilities found!'
+                    }
+                }
+            }
+        }
       // stage('Clean up Docker Image') {
       //     steps {
       //       sh('''
