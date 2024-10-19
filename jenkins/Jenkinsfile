@@ -76,7 +76,7 @@ pipeline {
                 script {
                     env.VERSION = "v0.1.${BUILD_NUMBER}"
                     sh '''
-                      trivy image --scanners vuln --format json --output trivy-report.json comsci-project-customer-dev:${VERSION}
+                      sudo trivy image --scanners vuln --format json --output trivy-report.json comsci-project-customer-dev:${VERSION}
                     '''
                 }
             }
