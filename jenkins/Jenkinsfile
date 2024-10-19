@@ -49,16 +49,16 @@ pipeline {
             }
           }
       }
-      // stage('Build and Push Docker Images') {
-      //   steps {
-      //     script {
-      //       env.VERSION = "v0.1.${BUILD_NUMBER}"
-      //       sh('''
-      //           sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
-      //         ''')
-      //     }
-      //   }
-      // }
+      stage('Build and Push Docker Images') {
+        steps {
+          script {
+            env.VERSION = "v0.1.${BUILD_NUMBER}"
+            sh('''
+                sudo docker build -t comsci-project-customer-dev:${VERSION} ./project/
+              ''')
+          }
+        }
+      }
       // stage('Trivy Image scan') {
       //     steps {
       //       sh('''
