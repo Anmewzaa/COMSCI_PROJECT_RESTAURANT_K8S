@@ -23,12 +23,22 @@ pipeline {
       }
       stage('OWASP Dependency-Check Vulnerabilities') {
         steps {
-          dependencyCheck additionalArguments: ''' 
-                      -o './'
-                      -s './'
-                      -f 'ALL' 
-                      --prettyPrint''', odcInstallation: 'OWASP_DEPENDENCY_CHECK'
-          dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+          try {
+            dependencyCheck additionalArguments: '''
+                -o './' 
+                -s './' 
+                -f 'ALL' 
+                --prettyPrint
+                ''', 
+                odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+            
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            echo "Dependency check completed successfully!"
+          } catch (Exception e) {
+              echo "Dependency check failed: ${e.message}"
+              currentBuild.result = 'FAILURE'
+              error("Stopping the pipeline as vulnerabilities were found.")
+          }
         }
       }
       stage('SonarQube Analysis') {
@@ -43,8 +53,8 @@ pipeline {
                 -D sonar.projectName=COMSCI_PROJECT_SONARQUBE_DEV \
                 -D sonar.projectVersion=1.0.0 \
                 -D sonar.sources=./project/src \
-                -D sonar.test.inclusions=/ \
-                -D sonar.exclusions=/
+                -D sonar.test.inclusions="**/test/**" \
+                -D sonar.exclusions="**/node_modules/**, **/dist/**"
             """)
             }
           }
