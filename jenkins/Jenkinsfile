@@ -4,10 +4,10 @@ pipeline {
   environment {
       SONARSCANNER = 'SonarQube'
       SONARSERVER = 'SonarQube'
-      // HOST_NAME = 'asia-southeast1-docker.pkg.dev'
-      // PROJECT_ID = 'proven-citizen-429506-e2'
-      // REGISTRY_NAME = 'project-registry'
-      // IMAGE_NAME = 'project'
+      HOST_NAME = 'asia-southeast1-docker.pkg.dev'
+      PROJECT_ID = 'final-project-438910'
+      REGISTRY_NAME = 'customerdev'
+      IMAGE_NAME = 'project'
   }
 
   stages {
@@ -66,7 +66,7 @@ pipeline {
           script {
             env.VERSION = "v0.1.${BUILD_NUMBER}"
             sh('''
-                sudo docker build -t comsci-project-customer-dev:${VERSION} ./project/
+                sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
               ''')
           }
         }
@@ -76,7 +76,7 @@ pipeline {
             script {
               env.VERSION = "v0.1.${BUILD_NUMBER}"
                 sh '''
-                  sudo trivy image --scanners vuln --format json --output trivy-report.json comsci-project-customer-dev:${VERSION}
+                  sudo trivy image --scanners vuln --format json --output trivy-report.json ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
                 '''
             }
           }
@@ -92,11 +92,6 @@ pipeline {
       //         sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
       //         sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
       //       ''')
-      //     }
-      // }
-      // stage('Trigger Manifest Update') {
-      //     steps {
-      //       build job:'UpdateGitops',parameters: [string(name:'DOCKERTAG',value: "v0.1.${BUILD_NUMBER}")]
       //     }
       // }
   }
