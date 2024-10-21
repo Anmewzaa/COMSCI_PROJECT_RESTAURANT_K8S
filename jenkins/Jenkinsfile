@@ -6,8 +6,8 @@ pipeline {
       SONARSERVER = 'SonarQube'
       HOST_NAME = 'asia-southeast1-docker.pkg.dev'
       PROJECT_ID = 'final-project-438910'
-      REGISTRY_NAME = 'customerdev'
-      IMAGE_NAME = 'project'
+      REGISTRY_NAME = 'customer'
+      IMAGE_NAME = 'dev'
   }
 
   stages {
