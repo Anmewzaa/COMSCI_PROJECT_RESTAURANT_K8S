@@ -61,7 +61,7 @@ pipeline {
           }
         }
       }
-      stage('Build and Push Docker Images') {
+      stage('Build Docker Images') {
         steps {
           script {
             env.VERSION = "v0.1.${BUILD_NUMBER}"
@@ -86,13 +86,13 @@ pipeline {
             archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
           }
       }
-      // stage('Clean up Docker Image') {
-      //     steps {
-      //       sh('''
-      //         sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
-      //         sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
-      //       ''')
-      //     }
-      // }
+      stage('Push and Clean up Docker Image') {
+          steps {
+            sh('''
+              sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+              sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+            ''')
+          }
+      }
   }
 }
