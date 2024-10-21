@@ -74,7 +74,6 @@ pipeline {
       stage('Scan with Trivy') {
           steps {
             script {
-              env.VERSION = "v0.1.${BUILD_NUMBER}"
                 sh '''
                   sudo trivy image --scanners vuln --format json --output trivy-report.json ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
                 '''
@@ -92,6 +91,11 @@ pipeline {
               sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
               sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
             ''')
+          }
+      }
+      stage('Trigger Manifest Update') {
+          steps {
+            build job:'COMSCI_CUSTOMER_DEV_MANIFEST',parameters: [string(name:'DOCKERTAG',value: "${VERSION}")]
           }
       }
   }

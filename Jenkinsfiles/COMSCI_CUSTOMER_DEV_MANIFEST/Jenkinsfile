@@ -12,5 +12,12 @@ pipeline {
           checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_ACCESS_TOKENS', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_K8S']])
         }
       }
+      stage('Show Parameter') {
+            steps {
+                sh('''
+                  echo $DOCKERTAG
+                ''')
+            }
+      }
   }
 }
