@@ -5,12 +5,13 @@
 replicaCount: 2
 
 image:
-  repository: nginx
+  repository: asia-southeast1-docker.pkg.dev/final-project-438910/customer/dev
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.27.2-alpine"
+  tag: "v0.1.26"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: regcred
 nameOverride: ""
 fullnameOverride: ""
 
