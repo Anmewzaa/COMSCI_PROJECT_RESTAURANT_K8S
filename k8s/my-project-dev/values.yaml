@@ -2,16 +2,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 1
 
 image:
-  repository: asia-southeast1-docker.pkg.dev/final-project-438910/customer/dev
+  repository: httpd
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.1.26"
+  tag: "2.4.62-alpine"
 
-imagePullSecrets:
-  - name: regcred
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -50,21 +49,17 @@ ingress:
   enabled: true
   className: "nginx"
   annotations:
-    {}
-    # kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: paradise-dev.punyakon.net
       paths:
         - path: /
           pathType: ImplementationSpecific
-  # tls:
-  #   - secretName: paradise-dev-tls
-  #     hosts:
-  #       - paradise-dev.punyakon.net
-
-env:
-  VITE_API_URL: "https://paradise-api.up.railway.app"
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 resources:
   {}
@@ -82,11 +77,11 @@ resources:
 livenessProbe:
   httpGet:
     path: /
-    port: http
+    port: 80
 readinessProbe:
   httpGet:
     path: /
-    port: http
+    port: 80
 
 autoscaling:
   enabled: false
