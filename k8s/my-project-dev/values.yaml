@@ -8,7 +8,7 @@ image:
   repository: asia-southeast1-docker.pkg.dev/final-project-438910/customer/dev
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.1.33
+  tag: v0.1.34
 
 imagePullSecrets:
   - name: regcred
