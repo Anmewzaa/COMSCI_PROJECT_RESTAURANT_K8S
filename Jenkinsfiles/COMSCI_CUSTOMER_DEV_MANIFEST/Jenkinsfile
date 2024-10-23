@@ -15,7 +15,8 @@ pipeline {
       stage('Update Helm Manifest File') {
             steps {
                 sh('''
-                  sh "sed -i 's/tag: .*/tag: \"$DOCKERTAG\"/' k8s/my-project-dev/values.yaml"
+                  ls
+                  sed -i 's/tag: .*/tag: \"$DOCKERTAG\"/' k8s/my-project-dev/values.yaml
                 ''')
             }
       }
