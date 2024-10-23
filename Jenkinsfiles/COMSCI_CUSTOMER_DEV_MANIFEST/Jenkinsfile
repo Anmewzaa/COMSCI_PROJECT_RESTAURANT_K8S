@@ -12,10 +12,10 @@ pipeline {
           checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_ACCESS_TOKENS', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_K8S']])
         }
       }
-      stage('Show Parameter') {
+      stage('Update Helm Manifest File') {
             steps {
                 sh('''
-                  echo $DOCKERTAG
+                  sh "sed -i 's/tag: .*/tag: \"$DOCKERTAG\"/' k8s/my-project-dev/values.yaml"
                 ''')
             }
       }
