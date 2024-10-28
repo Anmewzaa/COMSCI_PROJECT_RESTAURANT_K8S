@@ -76,11 +76,11 @@ pipeline {
             script {
                 env.VERSION = "v0.1.${BUILD_NUMBER}"
                 sh '''
-                  sudo trivy image --scanners vuln --format json --output trivy-report.json ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+                  sudo trivy image --scanners vuln --format json --output trivy-report.json --skip-update ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
                 '''
             }
           }
-        }
+      }
       stage('Publish Artifacts') {
           steps {
             archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
