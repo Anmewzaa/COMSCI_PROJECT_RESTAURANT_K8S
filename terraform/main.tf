@@ -40,6 +40,11 @@ resource "google_compute_firewall" "project_firewall" {
     ports    = ["22"]
   }
 
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443"] 
+  }
+
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["allow-ssh"]
   direction     = "INGRESS"
