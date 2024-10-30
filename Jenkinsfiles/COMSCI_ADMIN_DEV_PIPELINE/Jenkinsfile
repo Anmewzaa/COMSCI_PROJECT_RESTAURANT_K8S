@@ -1,0 +1,83 @@
+pipeline {
+  agent any
+
+  environment {
+      HOST_NAME = 'asia-southeast1-docker.pkg.dev'
+      PROJECT_ID = 'final-project-438910'
+      REGISTRY_NAME = 'admin'
+      IMAGE_NAME = 'dev'
+  }
+
+  stages {
+      stage('Cleanup Workspace') {
+        steps {
+          cleanWs()
+        }
+      }
+      stage('Git Check Out') {
+        steps {
+          checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_ACCESS_TOKENS', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_ADMIN']])
+        }
+      }
+      stage('OWASP Dependency-Check Vulnerabilities') {
+        steps {
+          script {
+            try {
+            dependencyCheck additionalArguments: '''
+                -o './' 
+                -s './' 
+                -f 'ALL' 
+                --prettyPrint
+                ''', 
+                odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+            
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            echo "Dependency check completed successfully!"
+            } catch (Exception e) {
+                echo "Dependency check failed: ${e.message}"
+                currentBuild.result = 'FAILURE'
+                error("Stopping the pipeline as vulnerabilities were found.")
+            }
+          }
+        }
+      }
+      stage('Build Docker Images') {
+        steps {
+          script {
+            env.VERSION = "v0.1.${BUILD_NUMBER}"
+            sh('''
+                sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
+              ''')
+          }
+        }
+      }
+      stage('Scan with Trivy') {
+          steps {
+            script {
+                env.VERSION = "v0.1.${BUILD_NUMBER}"
+                sh '''
+                  sudo trivy image --scanners vuln --format json --output trivy-report.json --skip-update ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+                '''
+            }
+          }
+      }
+      stage('Publish Artifacts') {
+          steps {
+            archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
+          }
+      }
+      stage('Push and Clean up Docker Image') {
+          steps {
+            sh('''
+              sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+              sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+            ''')
+          }
+      }
+      // stage('Trigger Manifest Update') {
+      //     steps {
+      //       build job:'COMSCI_CUSTOMER_DEV_MANIFEST',parameters: [string(name:'DOCKERTAG',value: "${VERSION}")]
+      //     }
+      // }
+  }
+}
