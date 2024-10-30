@@ -25,3 +25,9 @@ variable "subnet_name" {
   type        = string
   default     = "project-subnet"
 }
+
+variable "repo_name" {
+  description = "The name of the Artifact Registry Repo"
+  type        = string
+  default     = "project-subnet"
+}
