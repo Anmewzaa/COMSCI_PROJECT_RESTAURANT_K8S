@@ -1,0 +1,16 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        cleanWs()
+      }
+    }
+    stage('Git Check Out') {
+      steps {
+        checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GitHub-Token', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
+      }
+    }
+  }
+}
