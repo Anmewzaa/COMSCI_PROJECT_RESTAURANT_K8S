@@ -95,11 +95,11 @@ resource "google_container_node_pool" "default_node_pool" {
 
   autoscaling {
     min_node_count = 1 
-    max_node_count = 2
+    max_node_count = 3
   }     
 
   node_config {
-    machine_type    = "e2-small"                      
+    machine_type    = "e2-medium"                      
     disk_size_gb    = 50                          
     image_type      = "COS_CONTAINERD"         
 

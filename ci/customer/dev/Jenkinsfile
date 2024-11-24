@@ -9,7 +9,7 @@ pipeline {
     }
     stage('Git Check Out') {
       steps {
-        checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GitHub-Token', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
+        checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
       }
     }
   }
