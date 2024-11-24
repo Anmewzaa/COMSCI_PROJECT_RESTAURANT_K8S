@@ -68,7 +68,6 @@ resource "google_artifact_registry_repository" "artifact_admin_customer" {
   format      = "DOCKER"            
 }
 
-# สร้าง GKE Standard Cluster
 resource "google_container_cluster" "kubernetes_cluster" {
   name               = "kubernetes-cluster"
   location           = "asia-southeast1-a"       
@@ -78,20 +77,26 @@ resource "google_container_cluster" "kubernetes_cluster" {
 
   remove_default_node_pool = true               
 
-  min_master_version = "1.30.5-gke.1014001"    
+  min_master_version = "1.30.5-gke.1014003"   
 
   master_auth {
-  client_certificate_config {
-    issue_client_certificate = false
+    client_certificate_config {
+      issue_client_certificate = false
+    }
   }
-}
 }
 
 resource "google_container_node_pool" "default_node_pool" {
   name       = "default"
   location   = google_container_cluster.kubernetes_cluster.location
   cluster    = google_container_cluster.kubernetes_cluster.name
-  node_count = 2          
+
+  node_count = 1   
+
+  autoscaling {
+    min_node_count = 1 
+    max_node_count = 2
+  }     
 
   node_config {
     machine_type    = "e2-small"                      
