@@ -12,5 +12,14 @@ pipeline {
         checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
       }
     }
+    stage('Docker') {
+      steps {
+        script {
+          sh('''
+            sudo docker ps
+          ''')
+        }
+      }
+    }
   }
 }
