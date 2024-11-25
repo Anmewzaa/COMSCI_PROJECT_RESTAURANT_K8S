@@ -25,7 +25,7 @@ pipeline {
             try {
             dependencyCheck additionalArguments: '''
                 -o './dependency-check-reports' 
-                -s './src' 
+                -s './project/src' 
                 -f 'ALL' 
                 --prettyPrint 
                 --failOnCVSS 7
