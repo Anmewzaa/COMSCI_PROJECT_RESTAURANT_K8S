@@ -21,7 +21,7 @@ pipeline {
     }
     stage('OWASP Dependency-Check Vulnerabilities') {
       steps {
-        dependencyCheck additionalArguments: '''--scan ./project/src --format HTML --out ./dependency-check-reports''',  odcInstallation: 'OWASP-Dependency-Check'
+        dependencyCheck additionalArguments: '''--scan ./project/src --format HTML --out ./dependency-check-reports''',  odcInstallation: 'OWASP_DEPENDENCY_CHECK'
       }
     }
     // stage('Build Docker Container') {
