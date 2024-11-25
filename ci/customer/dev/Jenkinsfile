@@ -1,6 +1,13 @@
 pipeline {
   agent any
 
+  environment {
+      HOST_NAME = 'asia-southeast1-docker.pkg.dev'
+      PROJECT_ID = 'final-project-438910'
+      REGISTRY_NAME = 'customer'
+      IMAGE_NAME = 'dev'
+  }
+
   stages {
     stage('Cleanup Workspace') {
       steps {
@@ -12,11 +19,34 @@ pipeline {
         checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
       }
     }
-    stage('Docker') {
+    stage('OWASP Dependency-Check Vulnerabilities') {
+        steps {
+          script {
+            try {
+            dependencyCheck additionalArguments: '''
+                -o './dependency-check-reports' 
+                -s './src' 
+                -f 'ALL' 
+                --prettyPrint 
+                --failOnCVSS 7
+                ''', 
+                odcInstallation: 'OWASP_DEPENDENCY_CHECK' 
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            echo "Dependency check completed successfully!"
+            } catch (Exception e) {
+                echo "Dependency check failed: ${e.message}"
+                currentBuild.result = 'FAILURE'
+                error("Stopping the pipeline as vulnerabilities were found.")
+            }
+          }
+        }
+      }
+    stage('Build Docker Container') {
       steps {
         script {
+          env.VERSION = "v0.1.${BUILD_NUMBER}"
           sh('''
-            sudo docker version
+            sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
           ''')
         }
       }
