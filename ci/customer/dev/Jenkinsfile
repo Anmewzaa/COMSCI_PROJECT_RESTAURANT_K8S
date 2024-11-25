@@ -25,10 +25,10 @@ pipeline {
               withCredentials([string(credentialsId: 'OWASP-TOKEN', variable: 'OWASP-TOKEN')]) {
                   try {
                       dependencyCheck additionalArguments: """
-                          '-o', './dependency-check-reports',
-                          '-s', './project/src',
-                          '-f', 'ALL',
-                          '--nvdApiKey', OWASP_TOKEN
+                          -o ./dependency-check-reports
+                          -s ./project/src
+                          -f ALL
+                          --nvdApiKey OWASP_TOKEN
                       """, 
                       odcInstallation: 'OWASP_DEPENDENCY_CHECK'
                       
@@ -43,15 +43,15 @@ pipeline {
           }
       }
     }
-    stage('Build Docker Container') {
-      steps {
-        script {
-          env.VERSION = "v0.1.${BUILD_NUMBER}"
-          sh('''
-            sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
-          ''')
-        }
-      }
-    }
+    // stage('Build Docker Container') {
+    //   steps {
+    //     script {
+    //       env.VERSION = "v0.1.${BUILD_NUMBER}"
+    //       sh('''
+    //         sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
+    //       ''')
+    //     }
+    //   }
+    // }
   }
 }
