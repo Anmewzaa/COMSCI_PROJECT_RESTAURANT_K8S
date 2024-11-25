@@ -23,9 +23,9 @@ pipeline {
       steps {
           script {
             dependencyCheck additionalArguments: """
-              -o ./dependency-check-reports
-              -s ./project
-              -f ALL
+                --scan ./project/src
+                --format ALL
+                --out ./dependency-check-reports
             """, 
             odcInstallation: 'OWASP_DEPENDENCY_CHECK'
 
