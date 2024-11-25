@@ -29,7 +29,7 @@ pipeline {
             """, 
             odcInstallation: 'OWASP_DEPENDENCY_CHECK'
 
-            dependencyCheckPublisher pattern: '**/dependency-check-report*.xml'
+            // dependencyCheckPublisher pattern: '**/dependency-check-report*.xml'
           }
       }
     }
