@@ -22,14 +22,15 @@ pipeline {
     stage('OWASP Dependency-Check Vulnerabilities') {
       steps {
           script {
-            dependencyCheck additionalArguments: """
-                --scan ./project/src
-                --format ALL
-                --out ./dependency-check-reports
-            """, 
-            odcInstallation: 'OWASP_DEPENDENCY_CHECK'
-
-            // dependencyCheckPublisher pattern: '**/dependency-check-report*.xml'
+            withCredentials([string(credentialsId: 'OWASP-TOKEN', variable: 'OWASP_TOKEN')]) {
+                dependencyCheck additionalArguments: """
+                    --scan ./project/src
+                    --format ALL
+                    --out ./dependency-check-reports
+                    --nvdApiKey ${OWASP_TOKEN}
+                """, 
+                odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+            }
           }
       }
     }
