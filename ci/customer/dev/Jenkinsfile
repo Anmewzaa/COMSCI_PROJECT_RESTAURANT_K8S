@@ -22,24 +22,14 @@ pipeline {
     stage('OWASP Dependency-Check Vulnerabilities') {
       steps {
           script {
-              try {
-                dependencyCheck additionalArguments: """
-                  -o ./dependency-check-reports
-                  -s ./project
-                  -f ALL
-                  -l ./dependency-check-reports/dependency-check.log
-                """, 
-                odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+            dependencyCheck additionalArguments: """
+              -o ./dependency-check-reports
+              -s ./project
+              -f ALL
+            """, 
+            odcInstallation: 'OWASP_DEPENDENCY_CHECK'
 
-                sh "ls -l ./dependency-check-reports"
-
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                echo "Dependency check completed successfully!"
-              } catch (Exception e) {
-                echo "Dependency check failed: ${e.message}"
-                currentBuild.result = 'FAILURE'
-                error("Stopping the pipeline as vulnerabilities were found.")
-              }
+            dependencyCheckPublisher pattern: '**/dependency-check-report*.xml'
           }
       }
     }
