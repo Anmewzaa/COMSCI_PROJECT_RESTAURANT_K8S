@@ -25,7 +25,7 @@ pipeline {
               try {
                 dependencyCheck additionalArguments: """
                   -o ./dependency-check-reports
-                  -s ./project/src
+                  -s ./project
                   -f 'ALL'
                 """, 
                 odcInstallation: 'OWASP_DEPENDENCY_CHECK'
