@@ -28,7 +28,6 @@ pipeline {
                           '-o', './dependency-check-reports',
                           '-s', './project/src',
                           '-f', 'ALL',
-                          '--prettyPrint',
                           '--nvdApiKey', OWASP_TOKEN
                       """, 
                       odcInstallation: 'OWASP_DEPENDENCY_CHECK'
