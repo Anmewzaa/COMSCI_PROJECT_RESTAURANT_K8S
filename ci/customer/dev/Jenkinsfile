@@ -19,36 +19,15 @@ pipeline {
         checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_CUSTOMER']])
       }
     }
-    stage('OWASP Dependency-Check Vulnerabilities') {
+    stage('Dependency Check') {
       steps {
-          script {
-            try {
-              dependencyCheck additionalArguments: """
-                  -o ./dependency-check-reports
-                  -s ./project
-                  -f ALL
-                  --noupdate
-              """, 
-              odcInstallation: 'OWASP_DEPENDENCY_CHECK'
-
-              dependencyCheckPublisher pattern: '**/dependency-check-report*.xml'
-            } catch (Exception e) {
-              echo "Dependency check failed: ${e.message}"
-              currentBuild.result = 'FAILURE'
-              error("Stopping the pipeline as vulnerabilities were found.")
-            }
-          }
+        dependencyCheck additionalArguments: ''' 
+                      -o './'
+                      -s './'
+                      -f 'ALL' 
+                      --prettyPrint''', odcInstallation: 'OWASP-CHECK'
+        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
       }
     }
-    // stage('Build Docker Container') {
-    //   steps {
-    //     script {
-    //       env.VERSION = "v0.1.${BUILD_NUMBER}"
-    //       sh('''
-    //         sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
-    //       ''')
-    //     }
-    //   }
-    // }
   }
 }
