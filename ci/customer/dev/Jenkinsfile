@@ -21,7 +21,22 @@ pipeline {
     }
     stage('OWASP Dependency-Check Vulnerabilities') {
       steps {
-        dependencyCheck additionalArguments: '''--scan ./project/src --format HTML --out ./dependency-check-reports''',  odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+          script {
+              try {
+                dependencyCheck additionalArguments: """
+                  -o ./dependency-check-reports
+                  -s ./project/src
+                  -f 'ALL'
+                """, 
+                odcInstallation: 'OWASP_DEPENDENCY_CHECK'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                echo "Dependency check completed successfully!"
+              } catch (Exception e) {
+                echo "Dependency check failed: ${e.message}"
+                currentBuild.result = 'FAILURE'
+                error("Stopping the pipeline as vulnerabilities were found.")
+              }
+          }
       }
     }
     // stage('Build Docker Container') {
