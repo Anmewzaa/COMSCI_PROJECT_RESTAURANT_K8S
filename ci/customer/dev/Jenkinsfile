@@ -22,14 +22,14 @@ pipeline {
     stage('OWASP Dependency-Check Vulnerabilities') {
       steps {
           script {
-              withCredentials([string(credentialsId: 'OWASP-TOKEN', variable: 'NVD_API_KEY')]) {
+              withCredentials([string(credentialsId: 'OWASP-TOKEN', variable: 'OWASP-TOKEN')]) {
                   try {
                       dependencyCheck additionalArguments: """
-                          -o './dependency-check-reports'
-                          -s './project/src'
-                          -f 'ALL'
-                          --prettyPrint
-                          --nvdApiKey ${NVD_API_KEY}
+                          '-o', './dependency-check-reports',
+                          '-s', './project/src',
+                          '-f', 'ALL',
+                          '--prettyPrint',
+                          '--nvdApiKey', OWASP_TOKEN
                       """, 
                       odcInstallation: 'OWASP_DEPENDENCY_CHECK'
                       
@@ -44,7 +44,6 @@ pipeline {
           }
       }
     }
-    
     stage('Build Docker Container') {
       steps {
         script {
