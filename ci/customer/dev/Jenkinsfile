@@ -71,14 +71,15 @@ pipeline {
         }
       }
     }
-    // stage('Push Docker Container to Artifact Registry') {
-    //   steps {
-    //     script {
-    //       sh('''
-    //         sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
-    //       ''')
-    //     }
-    //   }
-    // }
+    stage('Push Docker Container to Artifact Registry') {
+      steps {
+        script {
+          sh('''
+            sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+            sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+          ''')
+        }
+      }
+    }
   }
 }
