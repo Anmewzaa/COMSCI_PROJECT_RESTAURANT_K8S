@@ -60,5 +60,24 @@ pipeline {
         }
       }
     }
+    stage('Container Security with Trivy') {
+      steps {
+        script {
+          env.VERSION = "v0.1.${BUILD_NUMBER}"
+          sh('''
+            udo trivy image --scanners vuln --format json --output trivy-report.json ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+          ''')
+        }
+      }
+    }
+    // stage('Push Docker Container to Artifact Registry') {
+    //   steps {
+    //     script {
+    //       sh('''
+    //         sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
+    //       ''')
+    //     }
+    //   }
+    // }
   }
 }
