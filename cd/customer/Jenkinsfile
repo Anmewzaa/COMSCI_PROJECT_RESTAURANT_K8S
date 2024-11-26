@@ -7,6 +7,11 @@ pipeline {
         cleanWs()
       }
     }
+    stage('Git Check Out') {
+      steps {
+        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_K8S']])
+      }
+    }
     stage("Docker Tag") {
       steps {
         sh "echo ${DOCKERTAG}"
