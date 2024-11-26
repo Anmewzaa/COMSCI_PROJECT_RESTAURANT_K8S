@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-      SONARSCANNER = 'customer-dev'
+      SONARSCANNER = 'sonar-scanner'
       SONARSERVER = 'customer-dev'
       HOST_NAME = 'asia-southeast1-docker.pkg.dev'
       PROJECT_ID = 'final-project-438910'
@@ -40,7 +40,7 @@ pipeline {
         withSonarQubeEnv("${SONARSERVER}") {
           sh ("""
             ${scannerHome}/bin/sonar-scanner \
-              -D sonar.projectKey=customer-dev \
+              -D sonar.projectKey=customer-dev\
               -D sonar.projectName=customer-dev \
               -D sonar.projectVersion=1.0.0 \
               -D sonar.sources=./project/src \
