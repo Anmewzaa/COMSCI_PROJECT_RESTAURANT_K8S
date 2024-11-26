@@ -1,0 +1,34 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        cleanWs()
+      }
+    }
+    stage('Git Check Out') {
+      steps {
+        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_K8S']])
+      }
+    }
+    stage('Update Helm Manifest File') {
+      steps {
+        sh('''
+          sed -i 's/tag: .*/tag: '${DOCKERTAG}'/' kubernetes/admin-dev/values.yaml
+        ''')
+      }
+      }
+    stage('Update Git') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'GITHUB_TOKEN', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+          sh "git config user.email punyakon857@gmail.com"
+          sh "git config user.name Anmewzaa"
+          sh "git add ."
+          sh "git commit -m 'Update customer dev manifestfile version ${DOCKERTAG}'"
+          sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/COMSCI_PROJECT_RESTAURANT_K8S.git HEAD:main"
+        }
+      }
+    }
+  }
+}
