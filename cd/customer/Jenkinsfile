@@ -1,0 +1,16 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        cleanWs()
+      }
+    }
+    stage("Docker Tag") {
+      steps {
+        sh "echo ${DOCKERTAG}"
+      }
+    }
+  }
+}
