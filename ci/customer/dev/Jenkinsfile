@@ -67,6 +67,7 @@ pipeline {
           sh('''
             sudo trivy image --scanners vuln --format json --output trivy-report.json ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
           ''')
+          archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
         }
       }
     }
