@@ -44,8 +44,7 @@ pipeline {
               -D sonar.projectName=customer-dev \
               -D sonar.projectVersion=1.0.0 \
               -D sonar.sources=./project/src \
-              -D sonar.tests=./project/tests \
-              -D sonar.test.inclusions=**/*.spec.js \
+              -D sonar.test.inclusions=/ \
               -D sonar.exclusions=**/node_modules/**,**/*.min.js
           """)
         }
