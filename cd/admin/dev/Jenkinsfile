@@ -25,7 +25,7 @@ pipeline {
           sh "git config user.email punyakon857@gmail.com"
           sh "git config user.name Anmewzaa"
           sh "git add ."
-          sh "git commit -m 'Update customer dev manifestfile version ${DOCKERTAG}'"
+          sh "git commit -m 'Update admin dev manifestfile version ${DOCKERTAG}'"
           sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/COMSCI_PROJECT_RESTAURANT_K8S.git HEAD:main"
         }
       }
