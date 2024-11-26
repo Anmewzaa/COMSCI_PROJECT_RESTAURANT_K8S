@@ -5,12 +5,13 @@
 replicaCount: 2
 
 image:
-  repository: nginx
+  repository: asia-southeast1-docker.pkg.dev/final-project-438910/customer-registry/dev
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v0.1.38"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - gcr-secret
 nameOverride: ""
 fullnameOverride: ""
 
