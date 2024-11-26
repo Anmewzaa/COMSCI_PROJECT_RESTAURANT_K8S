@@ -81,10 +81,10 @@ pipeline {
         }
       }
     }
-    // stage('Trigger Manifest Update') {
-    //   steps {
-    //     build job:'ADMIN-DEV-CD',parameters: [string(name:'DOCKERTAG',value: "${VERSION}")]
-    //   }
-    // }
+    stage('Trigger Manifest Update') {
+      steps {
+        build job:'ADMIN-DEV-CD',parameters: [string(name:'DOCKERTAG',value: "${VERSION}")]
+      }
+    }
   }
 }
