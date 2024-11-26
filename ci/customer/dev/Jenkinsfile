@@ -81,5 +81,10 @@ pipeline {
         }
       }
     }
+    stage('Trigger Manifest Update') {
+      steps {
+        build job:'CUSTOMER-DEV-CD',parameters: [string(name:'DOCKERTAG',value: "${VERSION}")]
+      }
+    }
   }
 }
