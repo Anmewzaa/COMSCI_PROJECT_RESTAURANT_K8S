@@ -6,7 +6,7 @@ pipeline {
       SONARSERVER = 'customer-dev'
       HOST_NAME = 'asia-southeast1-docker.pkg.dev'
       PROJECT_ID = 'final-project-438910'
-      REGISTRY_NAME = 'customer'
+      REGISTRY_NAME = 'customer-registry'
       IMAGE_NAME = 'dev'
   }
 
@@ -47,6 +47,16 @@ pipeline {
               -D sonar.test.inclusions=/ \
               -D sonar.exclusions=**/node_modules/**,**/*.min.js
           """)
+        }
+      }
+    }
+    stage('Build Docker Container') {
+      steps {
+        script {
+          env.VERSION = "v0.1.${BUILD_NUMBER}"
+          sh('''
+            sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
+          ''')
         }
       }
     }
