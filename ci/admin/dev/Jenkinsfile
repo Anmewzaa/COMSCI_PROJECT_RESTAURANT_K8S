@@ -1,0 +1,90 @@
+pipeline {
+  agent any
+
+  environment {
+      SONARSCANNER = 'sonar-scanner'
+      SONARSERVER = 'admin-dev'
+      HOST_NAME = 'asia-southeast1-docker.pkg.dev'
+      PROJECT_ID = 'final-project-438910'
+      REGISTRY_NAME = 'admin-registry'
+      IMAGE_NAME = 'dev'
+  }
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        cleanWs()
+      }
+    }
+    stage('Git Check Out') {
+      steps {
+        checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_TOKEN', url: 'https://github.com/Anmewzaa/COMSCI_PROJECT_RESTAURANT_APP_ADMIN']])
+      }
+    }
+    stage('Dependency Check') {
+      steps {
+        dependencyCheck additionalArguments: ''' 
+          --noupdate
+          -o './'
+          -s './'
+          -f 'ALL' 
+          --prettyPrint''', odcInstallation: 'OWASP-CHECK'
+        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+      }
+    }
+    stage('SonarQube Analysis') {
+      environment {
+        scannerHome = tool "${SONARSCANNER}"
+      }
+      steps {
+        withSonarQubeEnv("${SONARSERVER}") {
+          sh ("""
+            ${scannerHome}/bin/sonar-scanner \
+              -D sonar.projectKey=admin-dev\
+              -D sonar.projectName=admin-dev \
+              -D sonar.projectVersion=1.0.0 \
+              -D sonar.sources=./project/src \
+              -D sonar.test.inclusions=/ \
+              -D sonar.exclusions=**/node_modules/**,**/*.min.js
+          """)
+        }
+      }
+    }
+    stage('Build Docker Container') {
+      steps {
+        script {
+          env.VERSION = "v0.1.${BUILD_NUMBER}"
+          sh('''
+            sudo docker build -t ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} ./project/
+          ''')
+        }
+      }
+    }
+    stage('Container Security with Trivy') {
+      steps {
+        script {
+          env.VERSION = "v0.1.${BUILD_NUMBER}"
+          sh('''
+            sudo trivy image --scanners vuln --format json --output trivy-report.json ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+          ''')
+          archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
+        }
+      }
+    }
+    stage('Push Docker Container to Artifact Registry') {
+      steps {
+        script {
+          sh('''
+            sudo docker push ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+            sudo docker rmi ${HOST_NAME}/${PROJECT_ID}/${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION}
+          ''')
+        }
+      }
+    }
+    // stage('Trigger Manifest Update') {
+    //   steps {
+    //     build job:'ADMIN-DEV-CD',parameters: [string(name:'DOCKERTAG',value: "${VERSION}")]
+    //   }
+    // }
+  }
+}
