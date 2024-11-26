@@ -8,7 +8,7 @@ image:
   repository: asia-southeast1-docker.pkg.dev/final-project-438910/customer-registry/dev
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.1.41
+  tag: v0.1.42
 
 imagePullSecrets:
   - name: gcr-secret
